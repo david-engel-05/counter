@@ -49,7 +49,7 @@ export default function Clicker() {
     };
 
     fetchData();
-  }, []);
+  }, [supabase]);
 
 
   const handleClick = async () => {

@@ -34,7 +34,7 @@ export function usePresence(roomId = "default-room", userId = "anon") {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [roomId, userId]);
+  }, [roomId, userId, supabase]);
 
   return onlineCount;
 }

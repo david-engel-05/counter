@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 
-export async function POST(req: Request) {
+export async function POST() { // Removed the 'req: Request' parameter
     const cookiestore = cookies();
     const supabase = createClient(cookiestore);
   try {

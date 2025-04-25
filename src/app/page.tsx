@@ -1,7 +1,6 @@
 import Clicker from "@/components/clicker";
 import OnlineCounter from "@/components/online";
 
-import Image from "next/image";
 
 export default function Home() {
   return (
