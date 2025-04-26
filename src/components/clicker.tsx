@@ -159,7 +159,7 @@ export default function Clicker() {
     <div className="flex flex-col items-center justify-center gap-10">
       {milestoneReached ? (
         <div className=" text-white p-4 rounded">
-          🎉 Ziel erreicht! {nextGoal} ist das nächste ziel.
+          🎉 Goal achieved! the next goal is {nextGoal}
           <Confetti width={width} height={height} />
         </div>
       ) : (
@@ -167,13 +167,13 @@ export default function Clicker() {
             <Progress value={count} max={nextGoal || 100} className="w-96" />
         <div className="text-white p-4 rounded">
           {nextGoal && (
-            <p>Das nächste Ziel ist: <strong>{nextGoal}</strong></p>
+            <p>The next goal is <strong>{nextGoal}</strong></p>
           )}
         </div>
         </div>
       )}
       {loading ? (
-        <p>Lade Daten...</p>
+        <p>Loading data...</p>
       ) : (
         <h1 className="font-black text-9xl text-center">{count}</h1>
       )}
