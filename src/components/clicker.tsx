@@ -54,20 +54,18 @@ export default function Clicker() {
 
   const handleClick = async () => {
     if (isCoolingDown || isProcessingClick.current) return;
-
+  
     isProcessingClick.current = true;
     setIsCoolingDown(true);
     setCooldownTimeLeft(COOLDOWN_SECONDS);
-
+  
+    // ⬇️ Direkt nach dem Klick erhöhen wir lokal den Zähler
+    setCount(prev => prev + 1);
+  
+    const newCountAfterClick = count + 1;
+  
     try {
-      const response = await fetch('/api/click', { method: 'POST' });
-      if (!response.ok) {
-        throw new Error('Failed to increment counter');
-      }
-
-      const newCountAfterClick = count + 1; // Predict the count after the click
-
-      // Check if a milestone was reached
+      // ⬇️ Milestone-Logik direkt prüfen
       const nextUnreachedMilestone = milestones.find(m => !m.reached && newCountAfterClick >= m.goal);
       if (nextUnreachedMilestone) {
         setMilestoneReached(true);
@@ -76,17 +74,25 @@ export default function Clicker() {
           .update({ reached: true })
           .eq('id', nextUnreachedMilestone.id);
         setTimeout(() => setMilestoneReached(false), 5000);
-
-        // Update local milestones immediately
+  
+        // ⬇️ Update lokale milestones
         setMilestones(prevMilestones =>
           prevMilestones.map(m =>
             m.id === nextUnreachedMilestone.id ? { ...m, reached: true } : m
           )
         );
+  
         const remaining = milestones.find(m => !m.reached && newCountAfterClick < m.goal);
         if (remaining) setNextGoal(remaining.goal);
         else setNextGoal(null);
       }
+  
+      // ⬇️ Serverseitig erhöhen (global sichtbar)
+      const response = await fetch('/api/click', { method: 'POST' });
+      if (!response.ok) {
+        throw new Error('Failed to increment counter');
+      }
+  
     } catch (error) {
       console.error(error);
     } finally {
@@ -153,7 +159,7 @@ export default function Clicker() {
     <div className="flex flex-col items-center justify-center gap-10">
       {milestoneReached ? (
         <div className=" text-white p-4 rounded">
-          🎉 Ziel erreicht! {nextGoal} ist das nächste ziel.
+          🎉 Goal achieved! the next goal is {nextGoal}
           <Confetti width={width} height={height} />
         </div>
       ) : (
@@ -161,13 +167,13 @@ export default function Clicker() {
             <Progress value={count} max={nextGoal || 100} className="w-96" />
         <div className="text-white p-4 rounded">
           {nextGoal && (
-            <p>Das nächste Ziel ist: <strong>{nextGoal}</strong></p>
+            <p>The next goal is <strong>{nextGoal}</strong></p>
           )}
         </div>
         </div>
       )}
       {loading ? (
-        <p>Lade Daten...</p>
+        <p>Loading data...</p>
       ) : (
         <h1 className="font-black text-9xl text-center">{count}</h1>
       )}
